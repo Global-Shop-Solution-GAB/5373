@@ -1,0 +1,74 @@
+Program.Sub.ScreenSU.Start
+Gui.Form..Create
+Gui.Form..Caption("Customer Notes")
+Gui.Form..Size(8340,3990)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..BackColor(-2147483633)
+Gui.Form..MaxButton(False)
+Gui.Form..MinButton(False)
+Gui.Form..MousePointer(0)
+Gui.Form..Sizeable(False)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.txt1.Create(TextboxM)
+Gui.Form.txt1.Enabled(False)
+Gui.Form.txt1.Size(7995,2625)
+Gui.Form.txt1.Position(60,60)
+Gui.Form.cmdOK.Create(Button)
+Gui.Form.cmdOK.Size(1005,360)
+Gui.Form.cmdOK.Position(165,2880)
+Gui.Form.cmdOK.Caption("OK")
+Gui.Form.cmdOK.Event(Click,cmdOK_Click)
+Program.Sub.ScreenSU.End
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.Try
+V.Local.sError.Declare
+V.Local.sSql.Declare
+v.Local.sRet.Declare
+
+'Customer number
+f.Intrinsic.Control.if(v.Caller.Hook,=,28510)
+	f.Intrinsic.String.Build("select TEXT from V_CUST_ORDER_NOTES WHERE CUSTOMER = '{0}'",V.Passed.000204,V.Local.sSql)
+	f.ODBC.Connection!coredb.opencompanyconnection
+	f.ODBC.Connection!coredb.executeandreturn(v.Local.sSql,v.Local.sRet)
+	f.ODBC.Connection!coredb.close
+	f.Intrinsic.Control.If(v.Local.sRet.Length,>,0)
+		gui.Form.txt1.Text(v.Local.sRet)
+		gui.Form..Show
+	f.Intrinsic.Control.Else
+		f.Intrinsic.Control.CallSub(form_unload)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Else
+	f.Intrinsic.Control.callsub(form_unload)
+f.Intrinsic.Control.EndIf
+
+
+
+
+
+f.Intrinsic.Control.catch
+f.Intrinsic.Control.CallSub(catching,"sub",v.Ambient.CurrentSubroutine,"errorno",v.Ambient.ErrorNumber,"errordesc",v.Ambient.ErrorDescription)
+f.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+Program.Sub.Catching.Start
+v.Local.sError.declare(string)
+F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}",SCRIPTNAME,V.Ambient.NewLine,v.Args.sub,V.Args.errorno,V.args.errordesc,V.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+'F.Intrinsic.Control.CallSubFORMUNLOAD IF USED
+Program.Sub.Catching.End
+Program.Sub.cmdOK_Click.Start
+f.Intrinsic.Control.CallSub(form_unload)
+Program.Sub.cmdOK_Click.End
+
+Program.Sub.Form_UnLoad.Start
+f.Intrinsic.Control.End
+Program.Sub.Form_UnLoad.End
+
+
+
+
